@@ -61,7 +61,7 @@ _.mixin({
         startIndex = middle + 1;
       }
 
-      middle = Math.floor((stopIndex - startIndex) / 2 - startIndex);
+      middle = Math.floor((stopIndex - startIndex) / 2 + startIndex);
     }
     return null;
   }
