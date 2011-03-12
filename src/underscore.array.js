@@ -4,7 +4,7 @@
   "use strict";
   var _a = {
     groupby: function (array, iterator, context) {
-      if (array.length === 0) {
+      if (!array || !array.length) {
         return [];
       }
 
@@ -27,6 +27,10 @@
     },
 
     partition: function (array, iterator, context) {
+      if (array === null) {
+        return [[],[]];
+      }
+
       var same = [],
         different = [],
         results = [same, different],
@@ -69,6 +73,18 @@
       }
       return null;
     }
+  };
+
+  _a.binarySearch.naturalCompare = function (search) {
+    return function (other) {
+      if (search < other) {
+        return -1;
+      } else if (search > other) {
+        return 1;
+      } else {
+        return 0;
+      }
+    };
   };
 
   if (typeof this._ !== 'undefined') {
