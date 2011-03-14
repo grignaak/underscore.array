@@ -10,15 +10,13 @@ describe("groupby", function () {
   });
 
   function identity(x) { return x; }
-  function extract(name) {
+  function pluck(name) {
     return function (o) { return o[name]; }
   }
 
   function flatten(array, name) {
-    var i, j, src, dest, result = [], iron = extract(name);
-    for (i = 0; i < array.length; i += 1) {
-      src = array[i];
-      dest = []
+    var i, j, src, dest, result = [], iron = pluck(name);
+    for (i = 0, dest = []; src = array[i]; i += 1, dest = []) {
       for (j = 0; j < src.length; j += 1) {
         dest[j] = iron(src[j]);
       }
@@ -45,7 +43,7 @@ describe("groupby", function () {
   });
 
   it('should use the custom iterator', function () {
-    var result = _.groupby(numbers, extract('order'));
+    var result = _.groupby(numbers, pluck('order'));
     expect(flatten(result, 'id'))
       .toEqual([[0], [1, 2], [3, 4, 5], [6, 7, 8, 9]]);
     expect(flatten(result, 'order'))

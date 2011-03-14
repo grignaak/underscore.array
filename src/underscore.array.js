@@ -1,21 +1,38 @@
 /*jslint undef: true, browser: true, white: true, onevar: true, newcap: true, regexp: true, plusplus: true, bitwise: true, strict: true, maxerr: 50, indent: 2 */
-/*global window, define */
+/*global define */
 (function () {
   "use strict";
-  var _a = {
+  var makeCountIterator, _a;
+  _a = {
+    applyTo: function (array, fn, context) {
+      return fn.apply(context, array);
+    },
+
+    mapApply: function (arrayOfArrays, fn, context) {
+      var i, curArray, results = [];
+      if (arrayOfArrays) {
+        for (i = 0; curArray = arrayOfArrays[i]; i += 1) {
+          results.push(fn.apply(context, curArray));
+        }
+      }
+      return results;
+    },
+
     groupby: function (array, iterator, context) {
       if (!array || !array.length) {
         return [];
+      } else if (typeof iterator === 'number') {
+        iterator = makeCountIterator(iterator);
       }
 
-      var previous = iterator.call(context, array[0]),
+      var previous = iterator.call(context, array[0], 0),
         currentPartition = [array[0]],
         results = [currentPartition],
         i,
         current;
 
       for (i = 1; i < array.length; i += 1) {
-        current = iterator.call(context, array[i]);
+        current = iterator.call(context, array[i], i);
         if (previous !== current) {
           previous = current;
           currentPartition = [];
@@ -28,7 +45,7 @@
 
     partition: function (array, iterator, context) {
       if (array === null) {
-        return [[],[]];
+        return [[], []];
       }
 
       var same = [],
@@ -50,18 +67,18 @@
     },
     
     binarySearch: function (array, iterator, context) {
-      if (array === null) {
+      if (!array) {
         return null;
       }
 
       var startIndex  = 0,
         stopIndex = array.length - 1,
-        middle = Math.floor((stopIndex + startIndex) / 2),
+        middle = Math.floor((stopIndex - startIndex) / 2) + startIndex,
         comparison;
 
       while (startIndex <= stopIndex) {
         comparison = iterator.call(context, array[middle]);
-        if (comparison === 0) {
+        if (!comparison) {
           return array[middle];
         } else if (comparison < 0) {
           stopIndex = middle - 1;
@@ -77,14 +94,12 @@
 
   _a.binarySearch.naturalCompare = function (search) {
     return function (other) {
-      if (search < other) {
-        return -1;
-      } else if (search > other) {
-        return 1;
-      } else {
-        return 0;
-      }
+      return (search < other) ? -1 : (search > other);
     };
+  };
+
+  makeCountIterator = function (count) {
+    return function (a, i) { return Math.floor(i / count); };
   };
 
   if (typeof this._ !== 'undefined') {
@@ -92,5 +107,4 @@
   } else {
     this._ = _a;
   }
-
 }());

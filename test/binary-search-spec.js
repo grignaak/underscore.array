@@ -59,4 +59,13 @@ describe("binarySearch", function () {
   it('should run off the end', function () {
     assertSearch(comparator(256), null, [16, 64, 128]);
   });
+
+  describe('natural compare', function () {
+    it('should compare correctly', function () {
+      var comp = _.binarySearch.naturalCompare(4);
+      expect(comp(5)).toBeLessThan(0);
+      expect(comp(4)).toBeFalsy();
+      expect(comp(3)).toBeTruthy();
+    });
+  });
 });
